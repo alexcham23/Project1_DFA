@@ -1,5 +1,6 @@
 import msvcrt
 import menu
+import os
 def caratula():
     print("*********************************************************")
     print("*\t Lenguajes Formales de programación\t\t*")
@@ -13,5 +14,12 @@ def press_enter():
         m= str(msvcrt.getch(),'utf -8')
         if m == "\r":
             menu.prueba()
-        break
-caratula()
+            break
+      
+
+def menuprin():
+    
+    caratula()
+    press_enter()
+      
+menuprin()
