@@ -36,10 +36,14 @@ def menuAFD():
             print("hola")
             break
 def pedirnombre():
-    global nombre
+    global nombre,estado,alfabeto,inicial,final,aceptacion,transiciones,lista
     nombre= str(input("Ingrese Un nombre para el AFD:\n "))
     guardar=nombre,estado,alfabeto,inicial,final,aceptacion,transiciones
-    lista=(guardar)
+    lista.append(guardar)
     menuAFD()
-
-menuAFD()
+    imprimir()
+def imprimir():
+    global lista
+    for x in lista:
+        print(x)
+pedirnombre()
