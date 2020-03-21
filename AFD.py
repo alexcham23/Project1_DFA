@@ -8,8 +8,9 @@ aceptacion=[]
 transiciones=[]
 banderamenu= 0
 banderaestado=False
-lista= list()
+lista=[]
 dfagraph=""
+auxdfagraph=""
 def menuAFD():
     global banderamenu,banderaestado
     op = 0
@@ -39,7 +40,13 @@ def menuAFD():
                 menuAFD()    
             break
         elif op == '3' :
-           
+            if banderaestado==True :
+                banderamenu=3
+                inicialstate()
+            else:
+                os.system("cls")
+                print("por favor ingrese los estados\n")
+                menuAFD()     
             break
         elif op == '4' :
             banderamenu=2
@@ -58,8 +65,8 @@ def pedirnombre():
     nombre= str(input("Ingrese Un nombre para el AFD:\n "))
     guardar=nombre,estado,alfabeto,inicial,final,aceptacion,transiciones
     lista.append(guardar)
-    dfagraph+="digraph "+nombre+" {\n"
-    dfagraph+="rankdir=LR;\n"
+    dfagraph+="digraph \""+nombre+"\" {\n"
+    dfagraph+="rankdir=LR;\nsize=\"42,42\"  EMPTY [style=invis]  EMPTY [shape=point] node [shape = doublecircle];"
     menuAFD()
     imprimir()
 def imprimir():
@@ -116,6 +123,37 @@ def alfabetos():
                 elif bool(alfabeto in busca[2])==True:
                     print("El alfabeto "+alfabeto+" ya existe en la Base de datos")  
     menupreg()
+def inicialstate():
+    global lista,nombre
+    iniciales=str(input("Ingrese el estado inicial:\n"))
+    for buscar in lista:
+        if buscar[0]==nombre:
+            if  not buscar[3]:# verifica si esta vacia regresara un true o false
+                #x=0
+               # while x <int(len(buscar[1])) and bandera == False: 
+                if bool(inicial in buscar[1])==False:
+                    print("Error el estado no existe")
+                elif bool(inicial in buscar[1])==True:
+                    buscar[3].append(iniciales)
+            elif buscar[3]:
+                if bool(inicial in buscar[1])==False:
+                    print("Error el estado no existe")
+                elif bool(inicial in buscar[1])==True:
+                    preginicio(iniciales)
+                          
+def preginicio(inicial):
+    global lista,nombre
+    toctoc=inicial
+    for buscar in lista:
+        if buscar[0]==nombre:
+            inicial1=str(input("esta seguro de querer modificar Estado Inicial? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
+            if inicial1 =='y' or inicial1 =='Y':
+                buscar[3].insert(3,str(inicial))
+            if inicial1 =='N' or inicial1 =='n':
+                os.system("cls")
+                menuAFD()
+            else:
+                preginicio(toctoc)
 
 def menupreg():
     if banderamenu==1:
@@ -135,3 +173,4 @@ def menupreg():
     else:
         menupreg()                       
 pedirnombre()
+#inicialstate()
