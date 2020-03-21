@@ -95,7 +95,7 @@ def estados():
                     busca[1].append(estado)
     menupreg()                
 def alfabetos():
-    global nombre, lista
+    global nombre,lista
     bandera1=False
     bandera2=False
     alfabeto=str(input("Ingrese un alfabeto:\n"))
@@ -125,21 +125,32 @@ def alfabetos():
     menupreg()
 def inicialstate():
     global lista,nombre
-    iniciales=str(input("Ingrese el estado inicial:\n"))
-    for buscar in lista:
-        if buscar[0]==nombre:
-            if  not buscar[3]:# verifica si esta vacia regresara un true o false
-                #x=0
-               # while x <int(len(buscar[1])) and bandera == False: 
-                if bool(inicial in buscar[1])==False:
-                    print("Error el estado no existe")
-                elif bool(inicial in buscar[1])==True:
-                    buscar[3].append(iniciales)
-            elif buscar[3]:
-                if bool(inicial in buscar[1])==False:
-                    print("Error el estado no existe")
-                elif bool(inicial in buscar[1])==True:
-                    preginicio(iniciales)
+    bandera =False
+    iniciales = str(input("Ingrese el estado inicial:\n"))
+    if iniciales =="" or iniciales=="\t":
+        os.system("cls")
+        inicialstate()
+    else:
+        for buscar in lista:
+            if buscar[0]==nombre:
+                if  not buscar[3]:# verifica si esta vacia regresara un true o false
+                    x=0
+                    while x <int(len(buscar[1])) and bandera == False: 
+                        if buscar[1][x] == iniciales:
+                            bandera = True
+                        x+=1
+                    if bandera == True:
+                        buscar[3].append(iniciales)
+                        
+                elif buscar[3]:
+                    y=0
+                    while y <int(len(buscar[1])) and bandera == False: 
+                        if buscar[1][y] == iniciales:
+                            bandera = True
+                        y+=1
+                    if bandera == True:
+                        buscar[3].insert(0,iniciales)
+    menupreg()                   
                           
 def preginicio(inicial):
     global lista,nombre
@@ -163,10 +174,17 @@ def menupreg():
         if pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
-    if banderamenu==2:
+    elif banderamenu==2:
         pregunta= str(input("¿Deseas agregar un Alfabeto mas? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
             alfabetos()
+        if pregunta =='N' or pregunta =='n':
+            os.system("cls")
+            menuAFD()
+    elif banderamenu == 3:
+        pregunta = str(input("¿Deseas modificar el Estado Inicial ? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
+        if pregunta=='y' or pregunta =='Y':
+            inicialstate()
         if pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
