@@ -149,7 +149,8 @@ def inicialstate():
                             bandera = True
                         y+=1
                     if bandera == True:
-                        buscar[3].insert(0,iniciales)
+                        #buscar[3].insert(0,iniciales)
+                        buscar[3][0]=str(iniciales)
     menupreg()                   
                           
 def preginicio(inicial):
