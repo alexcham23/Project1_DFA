@@ -63,65 +63,78 @@ def menuAFD():
 def pedirnombre():
     global nombre,estado,alfabeto,inicial,final,aceptacion,transiciones,lista,dfagraph
     nombre= str(input("Ingrese Un nombre para el AFD:\n "))
-    guardar=nombre,estado,alfabeto,inicial,final,aceptacion,transiciones
-    lista.append(guardar)
-    dfagraph+="digraph \""+nombre+"\" {\n"
-    dfagraph+="rankdir=LR;\nsize=\"42,42\"  EMPTY [style=invis]  EMPTY [shape=point] node [shape = doublecircle];"
-    menuAFD()
-    imprimir()
+    if nombre=="" or nombre=="\t":
+        os.system("cls")
+        pedirnombre()
+    else:    
+        guardar=nombre,estado,alfabeto,inicial,final,aceptacion,transiciones
+        lista.append(guardar)
+        dfagraph+="digraph \""+nombre+"\" {\n"
+        dfagraph+="rankdir=LR;\nsize=\"42,42\"  EMPTY [style=invis]  EMPTY [shape=point] node [shape = doublecircle];"
+        menuAFD()
+        imprimir()
 def imprimir():
     global lista
     for x in lista:
         print(x)
 def estados():
     global nombre,lista,banderaestado
+   
     estado= str(input("Ingrese un estado:\n"))
     banderaestado=True
     bandera = False
-    for busca in lista:
-        if busca[0] == nombre:
-            x=0
-            if not busca[1]:#verificamos si lista de estados esta vacia
-                busca[1].append(estado)
-                
-            elif busca[1]:# de caso contrario no esta vacia    
-                while x < int(len(busca[1])) and bandera ==False:# verificamos el tamaño de la lista estado
-                    if busca[1][x] == estado:# verificamos si existe un estado repetido
-                        print("este Estado Y existe") 
-                        bandera = True
-                    x+=1    
-                     
-                if bandera== False:#guardamos el estado si no se encuentra repetido
+    if estado=="" or estado=="\t":
+        os.system("cls")
+        estados()
+    else:   
+        for busca in lista:
+            if busca[0] == nombre:
+                x=0
+                if not busca[1]:#verificamos si lista de estados esta vacia
                     busca[1].append(estado)
+                
+                elif busca[1]:# de caso contrario no esta vacia    
+                    while x < int(len(busca[1])) and bandera ==False:# verificamos el tamaño de la lista estado
+                        if busca[1][x] == estado:# verificamos si existe un estado repetido
+                            print("este Estado ya existe") 
+                            bandera = True
+                        x+=1    
+                     
+                    if bandera== False:#guardamos el estado si no se encuentra repetido
+                        busca[1].append(estado)
     menupreg()                
 def alfabetos():
     global nombre,lista
     bandera1=False
     bandera2=False
     alfabeto=str(input("Ingrese un alfabeto:\n"))
-    for busca in lista:
-        if busca[0]==nombre:
-            if not busca[2]:
-                x=0
-                while x < int(len(busca[1])) and bandera1==False :
-                    if busca[1][x]==alfabeto:
-                        print("EL alfabeto "+alfabeto+" debe de ser diferente al nombre del estado")
-                        bandera1=True
-                    x+=1
-                if bandera1== False:
-                    busca[2].append(alfabeto)
-            elif busca[2]:
-                if bool(alfabeto in busca[2])==False:
-                    y=0
-                    while y<int(len(busca[1])) and bandera2==False: 
-                        if busca[1][y]==alfabeto:
+    if alfabeto=="" or alfabeto=="\t":
+        os.system("cls")
+        alfabeto()
+    else:
+        for busca in lista:
+            if busca[0]==nombre:
+                if not busca[2]:
+                    x=0
+                    while x < int(len(busca[1])) and bandera1==False :
+                        if busca[1][x]==alfabeto:
                             print("EL alfabeto "+alfabeto+" debe de ser diferente al nombre del estado")
                             bandera1=True
-                        y+=1
+                        x+=1
                     if bandera1== False:
                         busca[2].append(alfabeto)
-                elif bool(alfabeto in busca[2])==True:
-                    print("El alfabeto "+alfabeto+" ya existe en la Base de datos")  
+                elif busca[2]:
+                    if bool(alfabeto in busca[2])==False:
+                        y=0
+                        while y<int(len(busca[1])) and bandera2==False: 
+                            if busca[1][y]==alfabeto:
+                                print("EL alfabeto "+alfabeto+" debe de ser diferente al nombre del estado")
+                                bandera1=True
+                            y+=1
+                        if bandera1== False:
+                            busca[2].append(alfabeto)
+                    elif bool(alfabeto in busca[2])==True:
+                        print("El alfabeto "+alfabeto+" ya existe en la Base de datos")  
     menupreg()
 def inicialstate():
     global lista,nombre
@@ -141,7 +154,8 @@ def inicialstate():
                         x+=1
                     if bandera == True:
                         buscar[3].append(iniciales)
-                        
+                    if bandera == False:
+                        print(iniciales+" no existe en los estados")    
                 elif buscar[3]:
                     y=0
                     while y <int(len(buscar[1])) and bandera == False: 
@@ -151,6 +165,8 @@ def inicialstate():
                     if bandera == True:
                         #buscar[3].insert(0,iniciales)
                         buscar[3][0]=str(iniciales)
+                    if bandera == False:
+                        print(iniciales+" no existe en los estados")     
     menupreg()                   
                           
 def preginicio(inicial):
