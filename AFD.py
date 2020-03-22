@@ -3,7 +3,7 @@ nombre=""
 estado=[]
 alfabeto=[]
 inicial=[]
-final=[]
+#final=[]
 aceptacion=[]
 transiciones=[]
 banderamenu= 0
@@ -61,16 +61,16 @@ def menuAFD():
             print("hola")
             break
 def pedirnombre():
-    global nombre,estado,alfabeto,inicial,final,aceptacion,transiciones,lista,dfagraph
+    global nombre,estado,alfabeto,inicial,aceptacion,transiciones,lista,dfagraph
     nombre= str(input("Ingrese Un nombre para el AFD:\n "))
     if nombre=="" or nombre=="\t":
         os.system("cls")
         pedirnombre()
     else:    
-        guardar=nombre,estado,alfabeto,inicial,final,aceptacion,transiciones
+        guardar=nombre,estado,alfabeto,inicial,aceptacion,transiciones
         lista.append(guardar)
-        dfagraph+="digraph \""+nombre+"\" {\n"
-        dfagraph+="rankdir=LR;\nsize=\"42,42\"  EMPTY [style=invis]  EMPTY [shape=point] node [shape = doublecircle];"
+        dfagraph="digraph \""+nombre+"\" {\n"
+        dfagraph+="rankdir=LR;\nsize=\"42,42\"  EMPTY [style=invis]  EMPTY [shape=point] node [shape = doublecircle];\n"
         menuAFD()
         imprimir()
 def imprimir():
@@ -128,11 +128,12 @@ def alfabetos():
                         y=0
                         while y<int(len(busca[1])) and bandera2==False: 
                             if busca[1][y]==alfabeto:
-                                print("EL alfabeto "+alfabeto+" debe de ser diferente al nombre del estado")
-                                bandera1=True
+                                bandera2=True
                             y+=1
-                        if bandera1== False:
+                        if bandera2== False:
                             busca[2].append(alfabeto)
+                        elif bandera2==True: 
+                            print("EL alfabeto "+alfabeto+" debe de ser diferente al nombre del estado")    
                     elif bool(alfabeto in busca[2])==True:
                         print("El alfabeto "+alfabeto+" ya existe en la Base de datos")  
     menupreg()
@@ -167,8 +168,61 @@ def inicialstate():
                         buscar[3][0]=str(iniciales)
                     if bandera == False:
                         print(iniciales+" no existe en los estados")     
-    menupreg()                   
-                          
+    menupreg()     
+def finalstate():
+    global lista,nombre
+    bandera =False
+    iniciales = str(input("Ingrese el estado finales:\n"))
+    if iniciales =="" or iniciales=="\t":
+        os.system("cls")
+        inicialstate()
+    else:
+        for buscar in lista:
+            if buscar[0]==nombre:
+                if  not buscar[4]:# verifica si esta vacia regresara un true o false
+                    x=0
+                    while x <int(len(buscar[1])) and bandera == False: 
+                        if buscar[1][x] == iniciales:
+                            bandera = True
+                        x+=1
+                    if bandera == True:
+                        buscar[4].append(iniciales)
+                        dfagraph+=""+iniciales+";\n"
+                    elif bandera == False:
+                        print(iniciales+" no existe en los estados")    
+                elif buscar[3]:
+                    if bool(iniciales in buscar[4])== False:
+                        y=0
+                        while y <int(len(buscar[1])) and bandera == False: 
+                            if buscar[1][y] == iniciales:
+                                bandera = True
+                            y+=1
+                        if bandera == True:
+                            #buscar[3].insert(0,iniciales)
+                            buscar[4].append(iniciales)
+                            dfagraph+=""+iniciales+";\n"
+                        elif bandera == False:
+                            print(iniciales+" no existe en los estados")  
+                    elif bool(iniciales in buscar[4]) ==True:
+                        print(iniciales+" Error ya exist dentro de los estdos FInales")
+
+    menupreg()       
+def modo1():
+    global lista,nombre
+    transicion1=str(input("ingrese las transiciones de esta manera sin parentesis (estado1,estado2;alfabeto)"))
+    if transicion1=="" or transicion1=="\t":
+        os.system("cls")
+        modo1()
+    else:
+        for busca in lista:
+            sl=transicion1.split(";")
+            sl2=sl[0].split(",")
+            if busca[0] == nombre:
+                if not busca[5]:
+                    if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[2])==True and bool(busca[2]==sl[1])==True:
+                        busca[5].append(transicion1)
+
+'''                         
 def preginicio(inicial):
     global lista,nombre
     toctoc=inicial
@@ -182,7 +236,7 @@ def preginicio(inicial):
                 menuAFD()
             else:
                 preginicio(toctoc)
-
+'''
 def menupreg():
     if banderamenu==1:
         pregunta= str(input("¿Deseas agregar un Estado mas? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
