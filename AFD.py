@@ -8,13 +8,14 @@ aceptacion=[]
 transiciones=[]
 banderamenu= 0
 banderaestado=False
+banderatransi=False
 lista=[]
 dfagraph=""
 auxdfagraph=""
 def menuAFD():
     global banderamenu,banderaestado
     op = 0
-    while op != 7:
+    while op != 8:
         print("=========================================================")
         print("=\t\t 1.   Ingresar Estados\t\t\t=") 
         print("=\t\t 2.   Ingresar Alfabeto\t\t\t=") 
@@ -49,17 +50,26 @@ def menuAFD():
                 menuAFD()     
             break
         elif op == '4' :
-            banderamenu=2
+            if banderaestado==True :
+                banderamenu=4
+                finalstate()
+            else:
+                os.system("cls")
+                print("por favor ingrese los estados\n")
+                menuAFD() 
             break
         elif op == '5' :
-           
+            banderamenu=5
             break
         elif op == '6' :
-            
+            banderamenu=6
             break
         elif op == '7' :
             print("hola")
             break
+        else:
+            menuAFD()
+
 def pedirnombre():
     global nombre,estado,alfabeto,inicial,aceptacion,transiciones,lista,dfagraph
     nombre= str(input("Ingrese Un nombre para el AFD:\n "))
@@ -158,15 +168,18 @@ def inicialstate():
                     if bandera == False:
                         print(iniciales+" no existe en los estados")    
                 elif buscar[3]:
+                    
                     y=0
                     while y <int(len(buscar[1])) and bandera == False: 
                         if buscar[1][y] == iniciales:
                             bandera = True
                         y+=1
-                    if bandera == True:
+                    if bandera == True and banderatransi==False:
                         #buscar[3].insert(0,iniciales)
                         buscar[3][0]=str(iniciales)
-                    if bandera == False:
+                    elif bandera == True and banderatransi==False: # aqui tenco que rebobinar para graphiz
+                        buscar[3][0]=str(iniciales)
+                    elif bandera == False:
                         print(iniciales+" no existe en los estados")     
     menupreg()     
 def finalstate():
@@ -208,7 +221,8 @@ def finalstate():
 
     menupreg()       
 def modo1():
-    global lista,nombre
+    global lista,nombre,banderatransi
+    auxiliar1='node [shape = circle];\n'
     transicion1=str(input("ingrese las transiciones de esta manera sin parentesis (estado1,estado2;alfabeto)"))
     if transicion1=="" or transicion1=="\t":
         os.system("cls")
@@ -219,8 +233,64 @@ def modo1():
             sl2=sl[0].split(",")
             if busca[0] == nombre:
                 if not busca[5]:
-                    if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[2])==True and bool(busca[2]==sl[1])==True:
+                    if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[1])==True and bool(busca[2]==sl[1])==True:
                         busca[5].append(transicion1)
+                        banderatransi=True
+                        auxiliar1+='EMPTY -> '+busca[3][0]+' [ label = "" ];\n'
+                        auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
+                    else:
+                        if bool(busca[1]==sl2[0])==False:
+                            print("El "+sl2[0]+" no existe en la lista de estados")
+                        elif bool(busca[1]==sl2[1])==False:
+                            print("El "+sl2[1]+" no existe en la lista de estados")
+                        elif bool(busca[2]==sl[1])==False:
+                            print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+                elif busca[5]:
+                    if transicion1 in busca[5]:
+                        print("Error las transiciones no pueden repetirse, Las transiciones repetidas solo son aceptadas en AFN")
+                    else:
+                        if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[1])==True and bool(busca[2]==sl[1])==True:
+                            busca[5].append(transicion1)
+                            banderatransi=True
+                            auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
+                        else:
+                            if bool(busca[1]==sl2[0])==False:
+                                print("El "+sl2[0]+" no existe en la lista de estados")
+                            elif bool(busca[1]==sl2[1])==False:
+                                print("El "+sl2[1]+" no existe en la lista de estados")
+                            elif bool(busca[2]==sl[1])==False:
+                                print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+def modo2():
+    global lista,nombre 
+    auxi=''
+    auxiliar2=str(input("Ingrese las transiciones de las siguiente manera [estado 1,estado 2; estado 1,estado 2]:\n"))
+    strange=auxiliar2.split("[")
+    strange1=strange[1].split("]")
+    strange2=strange1[0].split(";")
+    if auxiliar2== '' or auxiliar2=='\t' or auxiliar2==' ':
+        modo2()
+    else:
+        for busca in lista:
+            if busca[0]== nombre:
+                if not busca[5]:
+                    for lista2 in strange2:
+                        x=0
+                        while x<int(len(lista2)):
+                            if lista2[x]==',':
+                                 x+=1
+                            elif bool(lista2[x] in busca[1])==True:
+                                y=0
+                                while y<int(len(busca[1])):
+                                   if busca[1][y]==lista2[x]:
+                                     auxi=''+busca[1][y]+','+lista2[x]+';'+busca[3][x-1]
+                                     busca[5].append(auxi)
+                            elif bool(lista2[x] in busca[1])==False:        
+                               print("")
+                            
+
+
+
+        
 
 '''                         
 def preginicio(inicial):
@@ -237,6 +307,27 @@ def preginicio(inicial):
             else:
                 preginicio(toctoc)
 '''
+def menumodo():
+    opcional=0
+    while opcional != 3:
+        os.system("cls") 
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("!\t 1. Modo1 \t!")
+        print("!\t 2. Modo2 \t!")
+        print("!\t 3. salir \t!")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        opcional = str(input("Ingrese la Opcion:\n"))
+        if opcional== '1':
+            
+            modo1()
+        
+        elif opcional == '2':
+            modo2()
+        
+        elif opcional == '3':
+            menuAFD()        
+        else:
+            menumodo()
 def menupreg():
     if banderamenu==1:
         pregunta= str(input("¿Deseas agregar un Estado mas? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
@@ -259,7 +350,29 @@ def menupreg():
         if pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
+    elif banderamenu==4:
+        pregunta = str(input("¿Deseas ingresar mas estados de aceptacion? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
+        if pregunta=='y' or pregunta =='Y':
+            inicialstate()
+        if pregunta =='N' or pregunta =='n':
+            os.system("cls")
+            menuAFD()
+    elif banderamenu== 5:  
+        pregunta = str(input("¿Deseas ingresar mas transiciones? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
+        if pregunta=='y' or pregunta =='Y':
+            modo1()
+        if pregunta =='N' or pregunta =='n':
+            os.system("cls")
+            menuAFD()  
+    elif banderamenu==6:  
+        pregunta = str(input("¿Deseas ingresar mas transiciones? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
+        if pregunta=='y' or pregunta =='Y':
+            modo2()
+        if pregunta =='N' or pregunta =='n':
+            os.system("cls")
+            menuAFD() 
     else:
         menupreg()                       
-pedirnombre()
+#pedirnombre()
 #inicialstate()
+modo2()
