@@ -12,6 +12,7 @@ banderatransi=False
 lista=[]
 dfagraph=""
 auxdfagraph=""
+auxiliar1='node [shape = circle];\n'
 def menuAFD():
     global banderamenu,banderaestado
     op = 0
@@ -59,7 +60,13 @@ def menuAFD():
                 menuAFD() 
             break
         elif op == '5' :
-            banderamenu=5
+            if banderaestado==True :
+                banderamenu=5
+                menumodo()
+            else:
+                os.system("cls")
+                print("por favor ingrese los estados\n")
+                menuAFD() 
             break
         elif op == '6' :
             banderamenu=6
@@ -112,6 +119,8 @@ def estados():
                      
                     if bandera== False:#guardamos el estado si no se encuentra repetido
                         busca[1].append(estado)
+                   
+                        
     menupreg()                
 def alfabetos():
     global nombre,lista
@@ -183,7 +192,7 @@ def inicialstate():
                         print(iniciales+" no existe en los estados")     
     menupreg()     
 def finalstate():
-    global lista,nombre
+    global lista,nombre,dfagraph
     bandera =False
     iniciales = str(input("Ingrese el estado finales:\n"))
     if iniciales =="" or iniciales=="\t":
@@ -221,9 +230,8 @@ def finalstate():
 
     menupreg()       
 def modo1():
-    global lista,nombre,banderatransi
-    auxiliar1='node [shape = circle];\n'
-    transicion1=str(input("ingrese las transiciones de esta manera sin parentesis (estado1,estado2;alfabeto)"))
+    global lista,nombre,banderatransi,auxiliar1
+    transicion1=str(input("ingrese las transiciones de esta manera sin parentesis (estado1,estado2;alfabeto):\n"))
     if transicion1=="" or transicion1=="\t":
         os.system("cls")
         modo1()
@@ -233,18 +241,19 @@ def modo1():
             sl2=sl[0].split(",")
             if busca[0] == nombre:
                 if not busca[5]:
-                    if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[1])==True and bool(busca[2]==sl[1])==True:
-                        busca[5].append(transicion1)
-                        banderatransi=True
-                        auxiliar1+='EMPTY -> '+busca[3][0]+' [ label = "" ];\n'
-                        auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
-                    else:
-                        if bool(busca[1]==sl2[0])==False:
-                            print("El "+sl2[0]+" no existe en la lista de estados")
-                        elif bool(busca[1]==sl2[1])==False:
+                    if bool(sl2[0] in busca[1] )==True:
+                        if bool(sl2[1] in busca[1])==True:
+                            if bool(sl[1] in busca[2])==True:
+                                busca[5].append(transicion1)
+                                banderatransi=True
+                                auxiliar1+='EMPTY -> '+busca[3][0]+' [ label = "" ];\n'
+                                auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
+                            elif bool(sl[1] in busca[2])==False:
+                                 print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+                        elif bool(sl2[1]in busca[1])==False:
                             print("El "+sl2[1]+" no existe en la lista de estados")
-                        elif bool(busca[2]==sl[1])==False:
-                            print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+                    elif bool(sl2[0] in busca[1])==False:
+                            print("El "+sl2[0]+" no existe en la lista de estados")   
                 elif busca[5]:
                     if transicion1 in busca[5]:
                         print("Error las transiciones no pueden repetirse, Las transiciones repetidas solo son aceptadas en AFN")
@@ -281,11 +290,21 @@ def modo2():
                             elif bool(lista2[x] in busca[1])==True:
                                 y=0
                                 while y<int(len(busca[1])):
-                                   if busca[1][y]==lista2[x]:
+                                    if busca[1][y]==lista2[x]:
                                      auxi=''+busca[1][y]+','+lista2[x]+';'+busca[3][x-1]
                                      busca[5].append(auxi)
                             elif bool(lista2[x] in busca[1])==False:        
-                               print("")
+                                y=0
+                                while y<int(len(busca[1])):
+                                    if busca[1][y]==lista2[x]:
+                                        banderatrans=False
+                                        auxi=''+busca[1][y]+','+lista2[x]+';'+busca[3][x-1]
+                                        z=0
+                                        while z<int(len(busca[5])) and banderatrans==False :
+                                            if busca[5][z]==auxi:
+                                                banderatrans=True
+                                        if banderatrans== False:       
+                                            busca[5].append(auxi)
                             
 
 
@@ -329,50 +348,65 @@ def menumodo():
         else:
             menumodo()
 def menupreg():
+    global auxiliar1,dfagraph
     if banderamenu==1:
         pregunta= str(input("¿Deseas agregar un Estado mas? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
         if pregunta=='y' or pregunta =='Y':
             estados()
-        if pregunta =='N' or pregunta =='n':
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
+        else:
+            menupreg()    
     elif banderamenu==2:
         pregunta= str(input("¿Deseas agregar un Alfabeto mas? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
             alfabetos()
-        if pregunta =='N' or pregunta =='n':
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
+        else:
+            menupreg()
     elif banderamenu == 3:
         pregunta = str(input("¿Deseas modificar el Estado Inicial ? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
             inicialstate()
-        if pregunta =='N' or pregunta =='n':
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
+        else:
+            menupreg()    
     elif banderamenu==4:
         pregunta = str(input("¿Deseas ingresar mas estados de aceptacion? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
-            inicialstate()
-        if pregunta =='N' or pregunta =='n':
+            finalstate()
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD()
+        else:
+            menupreg()
     elif banderamenu== 5:  
         pregunta = str(input("¿Deseas ingresar mas transiciones? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
             modo1()
-        if pregunta =='N' or pregunta =='n':
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
-            menuAFD()  
+            menuAFD()
+            auxiliar1+='}'
+        else:
+            menupreg()      
     elif banderamenu==6:  
         pregunta = str(input("¿Deseas ingresar mas transiciones? presiona (y) para continuar y (N) para regresar al menu AFD : \n"))
         if pregunta=='y' or pregunta =='Y':
             modo2()
-        if pregunta =='N' or pregunta =='n':
+        elif pregunta =='N' or pregunta =='n':
             os.system("cls")
             menuAFD() 
+            auxiliar1+='}'
+        else:
+            menupreg()    
     else:
         menupreg()                       
-#pedirnombre()
+pedirnombre()
 #inicialstate()
-modo2()
+#modo2()
