@@ -1,4 +1,6 @@
 import os
+import graph
+#import ptvsd; print(ptvsd.__version__)
 nombre=""
 estado=[]
 alfabeto=[]
@@ -61,7 +63,6 @@ def menuAFD():
             break
         elif op == '5' :
             if banderaestado==True :
-                banderamenu=5
                 menumodo()
             else:
                 os.system("cls")
@@ -69,7 +70,7 @@ def menuAFD():
                 menuAFD() 
             break
         elif op == '6' :
-            banderamenu=6
+            banderamenu=7
             break
         elif op == '7' :
             print("hola")
@@ -157,7 +158,7 @@ def alfabetos():
                         print("El alfabeto "+alfabeto+" ya existe en la Base de datos")  
     menupreg()
 def inicialstate():
-    global lista,nombre
+    global lista,nombre,auxiliar1
     bandera =False
     iniciales = str(input("Ingrese el estado inicial:\n"))
     if iniciales =="" or iniciales=="\t":
@@ -186,8 +187,10 @@ def inicialstate():
                     if bandera == True and banderatransi==False:
                         #buscar[3].insert(0,iniciales)
                         buscar[3][0]=str(iniciales)
-                    elif bandera == True and banderatransi==False: # aqui tenco que rebobinar para graphiz
+                    elif bandera == True and banderatransi==True: # aqui tenco que rebobinar para graphiz
+                        auxiliar1='node [shape = circle];\n'
                         buscar[3][0]=str(iniciales)
+                        auxiliar1+='EMPTY -> '+buscar[3][0]+' [ label = "" ];\n'
                     elif bandera == False:
                         print(iniciales+" no existe en los estados")     
     menupreg()     
@@ -230,7 +233,7 @@ def finalstate():
 
     menupreg()       
 def modo1():
-    global lista,nombre,banderatransi,auxiliar1
+    global lista,nombre,banderatransi,auxiliar1,auxdfagraph
     transicion1=str(input("ingrese las transiciones de esta manera sin parentesis (estado1,estado2;alfabeto):\n"))
     if transicion1=="" or transicion1=="\t":
         os.system("cls")
@@ -247,7 +250,7 @@ def modo1():
                                 busca[5].append(transicion1)
                                 banderatransi=True
                                 auxiliar1+='EMPTY -> '+busca[3][0]+' [ label = "" ];\n'
-                                auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
+                                auxdfagraph+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
                             elif bool(sl[1] in busca[2])==False:
                                  print("El "+sl[1]+" no existe en la lista de Alfabetos") 
                         elif bool(sl2[1]in busca[1])==False:
@@ -258,17 +261,20 @@ def modo1():
                     if transicion1 in busca[5]:
                         print("Error las transiciones no pueden repetirse, Las transiciones repetidas solo son aceptadas en AFN")
                     else:
-                        if bool(busca[1]==sl2[0])==True and bool(busca[1]==sl2[1])==True and bool(busca[2]==sl[1])==True:
-                            busca[5].append(transicion1)
-                            banderatransi=True
-                            auxiliar1+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
-                        else:
-                            if bool(busca[1]==sl2[0])==False:
-                                print("El "+sl2[0]+" no existe en la lista de estados")
-                            elif bool(busca[1]==sl2[1])==False:
+                        if bool(sl2[0] in busca[1] )==True:
+                            if bool(sl2[1] in busca[1])==True:
+                                if bool(sl[1] in busca[2])==True:
+                                    busca[5].append(transicion1)
+                                    banderatransi=True
+                                    auxdfagraph+=''+sl2[0]+' -> '+sl2[1]+' [ label = "'+sl[1]+'" ];\n'
+                                elif bool(sl[1] in busca[2])==False:
+                                    print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+                            elif bool(sl2[1]in busca[1])==False:
                                 print("El "+sl2[1]+" no existe en la lista de estados")
-                            elif bool(busca[2]==sl[1])==False:
-                                print("El "+sl[1]+" no existe en la lista de Alfabetos") 
+                        elif bool(sl2[0] in busca[1])==False:
+                            print("El "+sl2[0]+" no existe en la lista de estados")
+                      
+    menupreg()                            
 def modo2():
     global lista,nombre 
     auxi=''
@@ -306,11 +312,7 @@ def modo2():
                                         if banderatrans== False:       
                                             busca[5].append(auxi)
                             
-
-
-
-        
-
+    menupreg() 
 '''                         
 def preginicio(inicial):
     global lista,nombre
@@ -327,6 +329,7 @@ def preginicio(inicial):
                 preginicio(toctoc)
 '''
 def menumodo():
+    global banderamenu
     opcional=0
     while opcional != 3:
         os.system("cls") 
@@ -337,10 +340,11 @@ def menumodo():
         print("!!!!!!!!!!!!!!!!!!!!!!!!!")
         opcional = str(input("Ingrese la Opcion:\n"))
         if opcional== '1':
-            
+            banderamenu=5
             modo1()
         
         elif opcional == '2':
+            banderamenu=6
             modo2()
         
         elif opcional == '3':
@@ -348,7 +352,7 @@ def menumodo():
         else:
             menumodo()
 def menupreg():
-    global auxiliar1,dfagraph
+    global auxiliar1,dfagraph,auxdfagraph,nombre
     if banderamenu==1:
         pregunta= str(input("¿Deseas agregar un Estado mas? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
         if pregunta=='y' or pregunta =='Y':
@@ -372,8 +376,14 @@ def menupreg():
         if pregunta=='y' or pregunta =='Y':
             inicialstate()
         elif pregunta =='N' or pregunta =='n':
-            os.system("cls")
-            menuAFD()
+            if banderatransi==True:
+                unir=dfagraph+auxiliar1+auxdfagraph+'}'
+                graph.grafic(unir,nombre)
+                os.system("cls")
+                menuAFD()
+            else:   
+                os.system("cls")
+                menuAFD()
         else:
             menupreg()    
     elif banderamenu==4:
@@ -390,9 +400,14 @@ def menupreg():
         if pregunta=='y' or pregunta =='Y':
             modo1()
         elif pregunta =='N' or pregunta =='n':
-            os.system("cls")
-            menuAFD()
-            auxiliar1+='}'
+            if banderatransi==True:
+                unir=dfagraph+auxiliar1+auxdfagraph+'}'
+                graph.grafic(unir,nombre)
+                os.system("cls")
+                menuAFD()
+            else:   
+                os.system("cls")
+                menuAFD()
         else:
             menupreg()      
     elif banderamenu==6:  
@@ -400,9 +415,14 @@ def menupreg():
         if pregunta=='y' or pregunta =='Y':
             modo2()
         elif pregunta =='N' or pregunta =='n':
-            os.system("cls")
-            menuAFD() 
-            auxiliar1+='}'
+            if banderatransi==True:
+                unir=dfagraph+auxiliar1+auxdfagraph+'}'
+                graph.grafic(unir,nombre)
+                os.system("cls")
+                menuAFD()
+            else:   
+                os.system("cls")
+                menuAFD()
         else:
             menupreg()    
     else:
