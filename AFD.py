@@ -275,10 +275,12 @@ def modo1():
                             print("El "+sl2[0]+" no existe en la lista de estados")
                       
     menupreg()                            
-def modo2():
-    global lista,nombre 
+def modo2(pase,nombre):
+    global lista,auxiliar1,auxdfagraph, banderatransi
     auxi=''
-    auxiliar2=str(input("Ingrese las transiciones de las siguiente manera [estado 1,estado 2; estado 1,estado 2]:\n"))
+    auxi2=''
+    #auxiliar2=str(input("Ingrese las transiciones de las siguiente manera [estado 1,estado 2; estado 1,estado 2]:\n"))
+    auxiliar2=pase
     strange=auxiliar2.split("[")
     strange1=strange[1].split("]")
     strange2=strange1[0].split(";")
@@ -287,33 +289,95 @@ def modo2():
     else:
         for busca in lista:
             if busca[0]== nombre:
-                if not busca[5]:
-                    for lista2 in strange2:
+                
+                    #for lista2 in strange2:
                         x=0
-                        while x<int(len(lista2)):
-                            if lista2[x]==',':
-                                 x+=1
-                            elif bool(lista2[x] in busca[1])==True:
-                                y=0
-                                while y<int(len(busca[1])):
-                                    if busca[1][y]==lista2[x]:
-                                     auxi=''+busca[1][y]+','+lista2[x]+';'+busca[3][x-1]
-                                     busca[5].append(auxi)
-                            elif bool(lista2[x] in busca[1])==False:        
-                                y=0
-                                while y<int(len(busca[1])):
-                                    if busca[1][y]==lista2[x]:
-                                        banderatrans=False
-                                        auxi=''+busca[1][y]+','+lista2[x]+';'+busca[3][x-1]
+                        while x<int(len(strange2)):
+                            bandera2=False
+                            strange3=strange2[x].split(",") 
+                            #for i in  strange3:
+                            k=0
+                            while k < int(len(strange3)):   
+                                if not busca[5]:
+                                    if bool(strange3[k] in busca[1])==True:
+                                        bandera=False
                                         z=0
-                                        while z<int(len(busca[5])) and banderatrans==False :
-                                            if busca[5][z]==auxi:
-                                                banderatrans=True
-                                        if banderatrans== False:       
+                                        while z<int(len(busca[1])) and  bandera==False :
+                                    
+                                                if busca[1][z]==strange3[k] :
+                                                    bandera =True
+                                                    if bandera2==False:
+                                                        aux=busca[1][x]
+                                                        bandera2=True
+                                                z+=1
+                                        if bandera==True:
+                                            dato=strange3[k]
+                                            num=strange3.index(dato)
+                                            auxi=''+aux+','+strange3[k]+';'+busca[2][k]
                                             busca[5].append(auxi)
-                            
+                                            banderatransi=True
+                                            auxiliar1+='EMPTY -> '+busca[3][0]+' [ label = "" ];\n'
+                                            auxdfagraph+=''+aux+' -> '+strange3[k]+' [ label = "'+busca[2][k]+'" ];\n'
+                                        
+                                    elif bool(strange3[k] in busca[1])==False:        
+                                        bandera=False
+                                        z=0
+                                        while z<int(len(busca[1])) and  bandera==False:
+                                    
+                                                if strange3[k]=='-' or strange3[k]==''or strange3[k]==' ':
+                                                    bandera =True
+                                                    if bandera2==False:
+                                                        aux=busca[1][x]
+                                                        bandera2=True
+                                                       
+                                                z+=1
+                                        if bandera==True:
+                                            #dato=strange3[k]
+                                            #num=strange3.index(dato)
+                                            auxi=''+aux+','+strange3[k]+';'+busca[2][k]
+                                            busca[5].append(auxi) 
+                                elif busca[5]:
+                                    if bool(strange3[k] in busca[1])==True:
+                                        bandera=False
+                                        z=0
+                                        while z<int(len(busca[1])) and  bandera==False:
+                                    
+                                                if busca[1][z]==strange3[k]:
+                                                    bandera =True
+                                                    if bandera2==False:
+                                                        aux=busca[1][x]
+                                                        bandera2=True
+                                                z+=1
+                                        if bandera==True:
+                                            #dato=strange3[k]
+                                            #num=strange3.index(dato)
+                                            auxi=''+aux+','+strange3[k]+';'+busca[2][k]
+                                            busca[5].append(auxi)
+                                            banderatransi=True
+                                            auxdfagraph+=''+aux+' -> '+strange3[k]+' [ label = "'+busca[2][k]+'" ];\n'
+                                        
+                                    elif bool(strange3[k] in busca[1])==False:        
+                                        bandera=False
+                                        z=0
+                                        while z<int(len(busca[1])) and  bandera==False :
+                                    
+                                                if strange3[k]=='-' or strange3[k]==''or strange3[k]==' ':
+                                                    bandera =True
+                                                    if bandera2==False:
+                                                        aux=busca[1][x]
+                                                        bandera2=True
+                                                       
+                                                z+=1
+                                        if bandera==True:
+                                            #dato=strange3[k]
+                                            #num=strange3.index(dato)
+                                            auxi=''+aux+','+strange3[k]+';'+busca[2][k]
+                                            busca[5].append(auxi)
+                                k+=1                          
+                            x+=1
+                        
     menupreg() 
-'''                         
+                        
 def preginicio(inicial):
     global lista,nombre
     toctoc=inicial
@@ -327,7 +391,7 @@ def preginicio(inicial):
                 menuAFD()
             else:
                 preginicio(toctoc)
-'''
+
 def menumodo():
     global banderamenu
     opcional=0
@@ -352,7 +416,7 @@ def menumodo():
         else:
             menumodo()
 def menupreg():
-    global auxiliar1,dfagraph,auxdfagraph,nombre
+    global auxiliar1,dfagraph,auxdfagraph,nombre,banderamenu
     if banderamenu==1:
         pregunta= str(input("¿Deseas agregar un Estado mas? presiona (y) para continuar y (N) para regresar al menu AFD :\n"))
         if pregunta=='y' or pregunta =='Y':
@@ -430,3 +494,5 @@ def menupreg():
 pedirnombre()
 #inicialstate()
 #modo2()
+
+    
