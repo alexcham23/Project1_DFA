@@ -275,12 +275,11 @@ def modo1():
                             print("El "+sl2[0]+" no existe en la lista de estados")
                       
     menupreg()                            
-def modo2(pase,nombre):
+def modo2():
     global lista,auxiliar1,auxdfagraph, banderatransi
     auxi=''
     auxi2=''
-    #auxiliar2=str(input("Ingrese las transiciones de las siguiente manera [estado 1,estado 2; estado 1,estado 2]:\n"))
-    auxiliar2=pase
+    auxiliar2=str(input("Ingrese las transiciones de las siguiente manera [estado 1,estado 2; estado 1,estado 2]:\n"))
     strange=auxiliar2.split("[")
     strange1=strange[1].split("]")
     strange2=strange1[0].split(";")
